@@ -1,0 +1,20 @@
+<launch>
+
+<node pkg="rosservice" type="rosservice" name="load_arm_controller"
+args="call /controller_manager/load_controller 'arm_controller'" />
+
+<node pkg="rosservice" type="rosservice" name="load_torso_controller" 
+args="call /controller_manager/load_controller 'torso_controller'" />
+
+<node pkg="rosservice" type="rosservice" name="load_head_controller" 
+args="call /controller_manager/load_controller 'head_controller'" />
+
+<node pkg="rosservice" type="rosservice" name="start_arm_controller" 
+args="call /controller_manager/switch_controller 
+'{start_controllers: [arm_controller]}'" />
+
+<node pkg="rosservice" type="rosservice" name="start_torso_controller" 
+args="call /controller_manager/switch_controller 
+'{start_controllers: [torso_controller]}'" />
+
+</launch>
