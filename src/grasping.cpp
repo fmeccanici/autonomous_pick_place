@@ -13,6 +13,8 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 	goal_pose.header.frame_id = move_group.getPlanningFrame();
 
 
+	ROS_INFO_STREAM("\t" << collision_objects.size());
+	
 	for (unsigned int i = 0; i < collision_objects.size(); i++)
 	{
 
@@ -36,12 +38,17 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 			// Assume for now a simple grasping strategy always pick up from above: rotation of pi/2 around y axis
 			
 			
-			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - 0.15;
+			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - 0.16;
 			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
-			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/4;
+			//goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.14;
+
+			ROS_INFO_STREAM("\t" << goal_pose.pose.position.z);
 
 			double roll = 0;
+			// double pitch = M_PI_2;
 			double pitch = 0;
+
 			double yaw = 0;
 
 			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
@@ -52,10 +59,11 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 		else if (collision_objects[i].id == "object_avoid" && pick_or_place == 0)
 		{
 
-			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - collision_objects[0].primitives[0].dimensions[0]/3;
+			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
 			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
-			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + 0.1;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.3;
 
+			ROS_INFO_STREAM("\t goal_pose, x: " << goal_pose.pose.position.x << "y: " << goal_pose.pose.position.y << "z: " << goal_pose.pose.position.z);
 			double roll = 0;
 			double pitch = 0;
 			double yaw = 0;
@@ -68,6 +76,7 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 
 void Grasping::attach_object()
 {
+	ROS_INFO_STREAM("\t" << "pickup_id: " << object_pickup.id);
 	move_group.attachObject(object_pickup.id);
 	visual_tools.publishText(text_pose, "Object attached to robot", rviz_visual_tools::WHITE, rviz_visual_tools::XLARGE);
 	visual_tools.trigger();
@@ -125,8 +134,9 @@ void Grasping::open_gripper()
 
 	// grip determines the open or close
 	// 0 is open 1600 is close
-	// grip = 0;
-	grip = 200;
+	grip = 0;
+	// grip = 200;
+	// grip = 900;
 
 	current = 75;
 	
@@ -292,13 +302,13 @@ void Grasping::pick()
 
 	// Setting posture of eef before grasp
 	// +++++++++++++++++++++++++++++++++++
-	open_gripper_sim(grasps[0].pre_grasp_posture);
+	// open_gripper_sim(grasps[0].pre_grasp_posture);
 	// END_SUB_TUTORIAL
 
 	// BEGIN_SUB_TUTORIAL pick2
 	// Setting posture of eef during grasp
 	// +++++++++++++++++++++++++++++++++++
-	close_gripper_sim(grasps[0].grasp_posture);
+	// close_gripper_sim(grasps[0].grasp_posture);
 	// END_SUB_TUTORIAL
 
 	// BEGIN_SUB_TUTORIAL pick3
@@ -324,13 +334,20 @@ void Grasping::place()
 	// +++++++++++++++++++++++++++
 	place_location[0].place_pose.header.frame_id = move_group.getPlanningFrame();
 	tf2::Quaternion orientation;
-	orientation.setRPY(0, 0, M_PI / 2);
+	orientation.setRPY(0, M_PI_2, 0);
 	place_location[0].place_pose.pose.orientation = tf2::toMsg(orientation);
 
 	/* While placing it is the exact location of the center of the object. */
 	place_location[0].place_pose.pose.position.x = 0.415;
 	place_location[0].place_pose.pose.position.y = 0;
 	place_location[0].place_pose.pose.position.z = 0.4;
+
+
+	// place_location[0].place_pose.pose.position.x = goal_pose.pose.position.x;
+	// place_location[0].place_pose.pose.position.y = goal_pose.pose.position.y;
+	// place_location[0].place_pose.pose.position.z = goal_pose.pose.position.z;
+
+
 
 	// Setting pre-place approach
 	// ++++++++++++++++++++++++++
@@ -350,10 +367,13 @@ void Grasping::place()
 	place_location[0].post_place_retreat.min_distance = 0.1;
 	place_location[0].post_place_retreat.desired_distance = 0.25;
 
+
+
+
 	// Setting posture of eef after placing object
 	// +++++++++++++++++++++++++++++++++++++++++++
 	/* Similar to the pick case */
-	open_gripper_sim(place_location[0].post_place_posture);
+	//open_gripper_sim(place_location[0].post_place_posture);
 
 	// Set support surface as table2.
 	// group.setSupportSurfaceName("table2");

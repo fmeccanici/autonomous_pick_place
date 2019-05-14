@@ -18,8 +18,13 @@ class AutonomousPickPlace
 	public:
 		std::string planning_group = "arm_torso";
 		moveit::planning_interface::MoveGroupInterface move_group{planning_group};
-		moveit_visual_tools::MoveItVisualTools visual_tools{move_group.getPlanningFrame(),"/rviz_visual_markers"};
 
+		
+		moveit_visual_tools::MoveItVisualTools visual_tools{move_group.getPlanningFrame(),"/rviz_visual_markers"};
+		moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
+
+
+		
 		AutonomousPickPlace();
 		~AutonomousPickPlace();
 

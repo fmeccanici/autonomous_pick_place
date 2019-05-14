@@ -33,6 +33,8 @@ add_executable(gripper_communication_error_solver src/gripper_communication_erro
 add_executable(gripper_state_adder src/gripper_state_adder.cpp)
 
 add_executable(autonomous_pick_place src/autonomous_pick_place.cpp)
+add_executable(generate_data src/generate_data.cpp)
+
 add_executable(test_node src/test_node.cpp)
 
 target_link_libraries(test_node ${catkin_LIBRARIES})
@@ -40,6 +42,9 @@ target_link_libraries(test_node ${catkin_LIBRARIES})
 target_link_libraries(gripper_communication_error_solver ${catkin_LIBRARIES})
 
 target_link_libraries(gripper_state_adder ${catkin_LIBRARIES})
+
+target_link_libraries(generate_data ${catkin_LIBRARIES})
+
 
 target_link_libraries(autonomous_pick_place ${catkin_LIBRARIES})
 target_link_libraries(grasping ${catkin_LIBRARIES})
@@ -54,6 +59,12 @@ install(TARGETS ${PROJECT_NAME} autonomous_pick_place grasping
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
     )
 
-install(PROGRAMS scripts/startup.sh DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-install(PROGRAMS scripts/head_down.sh DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
-install(PROGRAMS scripts/publish_camera_info.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(PROGRAMS scripts/startup.sh 
+scripts/head_down.sh
+DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+catkin_install_python(PROGRAMS 
+scripts/custom_calibration.py
+scripts/publish_camera_info.py
+scripts/publish_new_tf.py
+DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

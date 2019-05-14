@@ -46,6 +46,8 @@ void PathPlanning::plan()
 	ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
 }
 
+
+
 void PathPlanning::execute()
 {
 
@@ -61,15 +63,34 @@ void PathPlanning::execute()
   	ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
 }
 
+void PathPlanning::add_floor()
+{
+	
+	floor.id = "floor";
+	floor.header.frame_id = move_group.getPlanningFrame();
 
+	floor.primitives.resize(1);
+	floor.primitives[0].type = floor.primitives[0].BOX;
+	floor.primitives[0].dimensions.resize(3); 	
 
+	floor.primitives[0].dimensions[0] = 5;
+	floor.primitives[0].dimensions[1] = 5;
+	floor.primitives[0].dimensions[2] = 0; //0.05;
+
+	floor.primitive_poses.resize(1);
+	floor.primitive_poses[0].position.x = 0;
+	floor.primitive_poses[0].position.y = 0;
+	floor.primitive_poses[0].position.z = 0;	
+
+}
 void PathPlanning::add_objects(std::vector<moveit_msgs::CollisionObject> collision_objects)
 {
-	ROS_INFO_STREAM("\t"<<"CHECK");
 
+	add_floor();
+
+	collision_objects.push_back(floor);
 	ROS_INFO_NAMED("tutorial", "Add an object into the world");
 	planning_scene_interface.addCollisionObjects(collision_objects);
-
 
 	// // Pick pipeline
 	// std::vector<moveit_msgs::Grasp> grasps;
@@ -110,5 +131,119 @@ void PathPlanning::add_objects(std::vector<moveit_msgs::CollisionObject> collisi
 	// openGripper(grasps[0].pre_grasp_posture);
 
 	// move_group.pick("object", grasps);
+}
+
+void PathPlanning::disable_collisions()
+{
+	collision_detection::AllowedCollisionMatrix acm = planning_scene.getAllowedCollisionMatrix();
+	// robot_state::RobotState copied_state = planning_scene.getCurrentState();
+ //  	ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);
+
+
+	// ros.wait_for_service("/get_planning_scene", 10.0);
+	// ros.ServiceProxy("/get_planning_scene", planning_scene::GetPlanningScene);
+	// request = planning_scene::PlanningSceneComponents(components=planning_scene::PlanningSceneComponents.ALLOWED_COLLISION_MATRIX)
+
+	// response = planning_scene::get_planning_scene(request)
+	// acm = response.scene.allowed_collision_matrix
+
+	collision_detection::AllowedCollision::Type allowed;
+
+
+	ROS_INFO_STREAM("\t" << "allowed: " << acm.getAllowedCollision("gripper_finger_tip_left_joint", "object_pickup", allowed));
+
+	
+	acm.setEntry("gripper_finger_tip_left_joint", "object_pickup", true);
+	acm.setEntry("gripper_finger_tip_right_joint", "object_pickup", true);
+	acm.setEntry("gripper_finger_inner_right_joint", "object_pickup", true);
+	acm.setEntry("gripper_finger_inner_left_joint", "object_pickup", true);
+	acm.setEntry("gripper_finger_outer_left_joint", "object_pickup", true);
+	acm.setEntry("gripper_finger_outer_right_joint", "object_pickup", true);
+	acm.setEntry("gripper_joint", "object_pickup", true);
+	acm.setEntry("gripper_body_link", "object_pickup", true);
+	acm.setEntry("gripper_wrist_link", "object_pickup", true);
+	acm.setEntry("wrist_ft_tool_link", "object_pickup", true);
+	acm.setEntry("wrist_ft_link", "object_pickup", true);
+	acm.setEntry("end_effector_cam_link", "object_pickup", true);
+	acm.setEntry("end_effector_cam_optical_frame", "object_pickup", true);
+	acm.setEntry("gripper_grasp_link", "object_pickup", true);
+	acm.setEntry("gripper_motor_link", "object_pickup", true);
+	acm.setEntry("arm_tool_link", "object_pickup", true);
+	acm.setEntry("gripper_finger_tip_left_link", "object_pickup", true);
+	acm.setEntry("gripper_finger_inner_right_link", "object_pickup", true);
+	acm.setEntry("gripper_finger_tip_right_link", "object_pickup", true);
+
+	std::vector<std::string> default_entry_names;
+	// std::vector<moveit_msgs::AllowedCollisionEntry> entry_values;
+	std::vector<bool> default_entry_values;
+
+	int size = 4;
+
+	default_entry_names.resize(size);
+	default_entry_values.resize(size);
+
+ 	default_entry_names[0] = "gripper_finger_tip_right_link";
+ 	default_entry_names[1] = "gripper_link";
+	default_entry_names[2] = "gripper_wrist_link";
+	default_entry_names[3] = "gripper_finger_tip_right_link";
+
+ 	default_entry_values[0] = true;
+ 	default_entry_values[1] = true;
+ 	default_entry_values[2] = true;
+ 	default_entry_values[3] = true;
+
+ 	// moveit_msgs::AllowedCollisionEntry entry;
+
+ 	// std::vector<bool> enabled;
+ 	// enabled.resize(1);
+ 	// enabled[0] = true;
+ 	// entry.enabled = enabled;
+ 	// entry_values[0] = entry;
+
+ 	planning_scene_msgs.allowed_collision_matrix.default_entry_names.resize(size);
+ 	planning_scene_msgs.allowed_collision_matrix.default_entry_values.resize(size);
+
+
+	planning_scene_msgs.allowed_collision_matrix.default_entry_names[0] = default_entry_names[0];
+	planning_scene_msgs.allowed_collision_matrix.default_entry_values[0] = default_entry_values[0];
+	planning_scene_msgs.allowed_collision_matrix.default_entry_names[1] = default_entry_names[1];
+	planning_scene_msgs.allowed_collision_matrix.default_entry_values[1] = default_entry_values[1];
+
+	planning_scene_msgs.allowed_collision_matrix.default_entry_names[2] = default_entry_names[2];
+	planning_scene_msgs.allowed_collision_matrix.default_entry_values[2] = default_entry_values[2];
+
+	planning_scene_msgs.allowed_collision_matrix.default_entry_names[3] = default_entry_names[3];
+	planning_scene_msgs.allowed_collision_matrix.default_entry_values[3] = default_entry_values[3];
+	
+	planning_scene_msgs.is_diff = true;
+
+	ROS_INFO_STREAM("\t CHECK");
+	planning_scene_diff_publisher.publish(planning_scene_msgs);
+
+	// ROS_INFO_STREAM("\t" << acm.hasEntry("gripper_finger_outer_right_joint", "object_pickup"));
+	ROS_INFO_STREAM("\t" << "allowed: " << acm.getAllowedCollision("gripper_finger_tip_left_joint", "object_pickup", allowed));
+
+
+
+}
+
+void PathPlanning::home()
+{
+	geometry_msgs::PoseStamped home_pose;
+
+	home_pose.header.frame_id = move_group.getPlanningFrame();
+	home_pose.pose.position.x = 0.4132035105;
+	home_pose.pose.position.y = -0.0179568269643;
+	home_pose.pose.position.z = 0.208061153671;
+	home_pose.pose.orientation.x = 0.995545972505;
+	home_pose.pose.orientation.y = -0.0122897043145;
+	home_pose.pose.orientation.z = -0.0931866267225;
+	home_pose.pose.orientation.w = 0.00730974678028;
+	move_group.setPoseTarget(home_pose);
+
+	ROS_INFO_STREAM("\t Target pose set to: " << move_group.getPoseTarget(move_group.getEndEffectorLink()));
+
+	plan();
+	execute();
 }
 

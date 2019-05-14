@@ -30,6 +30,8 @@ double steps_to_rad(double steps)
 {
 
   // open and close grippper with intermediate states
+
+  /*
   if (steps > zero_point)
   {
     deg =  - factor * steps * factor_deg_per_step;
@@ -43,21 +45,23 @@ double steps_to_rad(double steps)
   {
     deg = 60;
   }
+ */
+  
 
   // open and close gripper with only 2 states, open and close
   // double deg;
 
-  // if (steps > 1000)
-  // {
-  //   deg = -13;
-  // }
-  // else if (steps <= 1000)
-  // {
-  //   deg = 60;
-  // }
+  if (steps > 1000)
+  {
+    deg = -13;
+  }
+  else if (steps <= 1000)
+  {
+    deg = 60;
+  }
 
   
-  ROS_INFO_STREAM("\t" << deg);
+  //ROS_INFO_STREAM("\t" << deg);
   return deg_to_rad(deg);
 }
 

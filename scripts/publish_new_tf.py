@@ -3,7 +3,6 @@ import roslib
 import rospy
 
 import tf
-import turtlesim.msg
 import numpy as np
 
 if __name__ == '__main__':
@@ -33,6 +32,7 @@ if __name__ == '__main__':
         #                  "xtion_rgb_optical_frame_angle_correction")
         # (trans, rot) = listener.lookupTransform("/base_footprint", "/xtion_rgb_optical_frame", rospy.Time(0))
         roll = np.deg2rad(-6)
+        # roll = np.deg2rad(-4.640)
         pitch = 0
         yaw = 0
 
@@ -42,7 +42,7 @@ if __name__ == '__main__':
         br.sendTransform((0, 0, 0),
                          new_rot,
                          rospy.Time.now(),
-                         "xtion_rgb_optical_frame_angle_correction",
+                         "xtion_rgb_optical_frame_roll_correction",
                          "xtion_rgb_optical_frame")
         # except (tf.LookupException, tf.ConnectivityException):
         #     continue

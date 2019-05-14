@@ -9,7 +9,7 @@ rosservice call /controller_manager/switch_controller "{start_controllers: ['hea
 joint_names:
  ['head_1_joint', 'head_2_joint']
 points:
-- positions: [0,-0.35]
+- positions: [0, -0.8]
   velocities: []
   accelerations: []
   effort: []
