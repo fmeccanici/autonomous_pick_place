@@ -93,15 +93,38 @@ void ObjectDetection::subscriber_callback(const aruco_msgs::MarkerArray &mk_arra
 			collision_objects[i].primitive_poses[0].position.z = mk_array.markers[i].pose.pose.position.z + 0.0475; //0.025;
 		*/
 			
+			// bolletje box
+			collision_objects[i].primitives.resize(1);
+			collision_objects[i].primitives[0].type = collision_objects[i].primitives[0].BOX;
+			collision_objects[i].primitives[0].dimensions.resize(3);
+
+			// without margin
+			// collision_objects[i].primitives[0].dimensions[0] = 0.135;
+			// collision_objects[i].primitives[0].dimensions[1] = 0.055;
+			// collision_objects[i].primitives[0].dimensions[2] = 0.14; 
+
+			// with margin
+			collision_objects[i].primitives[0].dimensions[0] = 0.15;
+			collision_objects[i].primitives[0].dimensions[1] = 0.1;
+			collision_objects[i].primitives[0].dimensions[2] = 0.16; 
+
+			// Define the pose of the object. 
+			collision_objects[i].primitive_poses.resize(1);
+			collision_objects[i].primitive_poses[0].position.x = mk_array.markers[i].pose.pose.position.x;
+			collision_objects[i].primitive_poses[0].position.y = mk_array.markers[i].pose.pose.position.y;
+			collision_objects[i].primitive_poses[0].position.z = mk_array.markers[i].pose.pose.position.z - collision_objects[i].primitives[0].dimensions[2]/2; //0.025;
+
+
+/*
 			// long box
 			collision_objects[i].primitives.resize(1);
 			collision_objects[i].primitives[0].type = collision_objects[i].primitives[0].BOX;
 			collision_objects[i].primitives[0].dimensions.resize(3);
 
 			// with margin
-			collision_objects[i].primitives[0].dimensions[0] = 0.1;
-			collision_objects[i].primitives[0].dimensions[1] = 0.1;
-			collision_objects[i].primitives[0].dimensions[2] = 0.4; 
+			collision_objects[i].primitives[0].dimensions[0] = 0.09;
+			collision_objects[i].primitives[0].dimensions[1] = 0.09;
+			collision_objects[i].primitives[0].dimensions[2] = 0.350; 
 		
 
 			// new object that doesnt use gripper to be picked up
@@ -120,7 +143,7 @@ void ObjectDetection::subscriber_callback(const aruco_msgs::MarkerArray &mk_arra
 			collision_objects[i].primitive_poses[0].position.y = mk_array.markers[i].pose.pose.position.y;
 			collision_objects[i].primitive_poses[0].position.z = mk_array.markers[i].pose.pose.position.z - collision_objects[i].primitives[0].dimensions[2]/2; //0.025;
 
-
+*/
 		}
 
 		if (mk_array.markers[i].id == 3)

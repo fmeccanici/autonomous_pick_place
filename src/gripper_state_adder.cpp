@@ -50,7 +50,8 @@ double steps_to_rad(double steps)
 
   // open and close gripper with only 2 states, open and close
   // double deg;
-
+  // old box
+/*
   if (steps > 1000)
   {
     deg = -13;
@@ -59,6 +60,18 @@ double steps_to_rad(double steps)
   {
     deg = 60;
   }
+*/
+
+  // new bolletje box, need to change the position at which the gripper should be open in simulation
+  if (steps > 1200)
+  {
+    deg = -13;
+  }
+  else if (steps <= 1200)
+  {
+    deg = 60;
+  }
+
 
   
   //ROS_INFO_STREAM("\t" << deg);

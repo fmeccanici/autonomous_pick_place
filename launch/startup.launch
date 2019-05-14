@@ -8,26 +8,25 @@
 
 	<!-- start all relevant controllers -->
 	<include file="$(find autonomous_pick_place)/launch/start_controllers.launch">
-	
 	</include>
 
-	<node pkg="autonomous_pick_place" type = "gripper_state_adder" name="gripper_state_adder" output="screen"/>
+<!-- 	<node pkg="autonomous_pick_place" type = "gripper_state_adder" name="gripper_state_adder" output="screen"/> -->
 
 	<!-- node to publish the new tf with angle correction -->
-	<node pkg="autonomous_pick_place" type = "publish_new_tf.py" name="publish_new_tf" output="screen"/>
+	<!-- <node pkg="autonomous_pick_place" type = "publish_new_tf.py" name="publish_new_tf" output="screen"/> -->
 
 
-	<!-- node to publish the right camera calibration file -->
-	<node pkg="autonomous_pick_place" type = "publish_camera_info.py" name="publish_camera_info" output="screen"/>
+	<!-- node to publish the right camera calibration file-->
+	<!-- <node pkg="autonomous_pick_place" type = "publish_camera_info.py" name="publish_camera_info" output="screen"/> -->
 
-	<!-- node to use the custom calibration with linear fitted function, arguments are the a and b from y = a*x+b -->
+	<!-- node to use the custom calibration with linear fitted function, arguments are the a and b from y = a*x+b : WARNING THIS DOES NOT WORK PROPERLY ON PICK AND PLACE SETUP -->
 <!-- 	<node pkg="autonomous_pick_place" type="custom_calibration.py" name= "custom_calibration" output="screen"> -->
 		<!-- <param name="arg1" value="$(arg args11)" /> -->
 		<!-- <param name="arg1" value="-0.04736501 1.17632553" /> -->
 	<!-- </node> -->
 
 	<!-- marker detection package -->
-	<include file = "$(find marker_detector)/launch/marker_detector.launch" />
+	<!-- <include file = "$(find marker_detector)/launch/marker_detector.launch" /> -->
 
 	<!-- launch the move_group node -->
 	<include file="$(find marco_config)/launch/move_group.launch">

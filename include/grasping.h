@@ -31,7 +31,6 @@ class Grasping : public AutonomousPickPlace
         std::vector<moveit_msgs::Grasp> grasps;
         
 
-        moveit_visual_tools::MoveItVisualTools visual_tools{move_group.getPlanningFrame(),"/rviz_visual_markers"};
         Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
 
 	Grasping();

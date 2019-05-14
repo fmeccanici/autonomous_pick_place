@@ -38,16 +38,20 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 			// Assume for now a simple grasping strategy always pick up from above: rotation of pi/2 around y axis
 			
 			
-			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - 0.16;
+			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
+			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.15;
+
+			/*
+			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - 0.2;
 			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
 			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/4;
-			//goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.14;
-
+			*/
 			ROS_INFO_STREAM("\t" << goal_pose.pose.position.z);
 
 			double roll = 0;
-			// double pitch = M_PI_2;
-			double pitch = 0;
+			double pitch = M_PI_2;
+			// double pitch = 0;
 
 			double yaw = 0;
 
@@ -61,11 +65,11 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 
 			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
 			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
-			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.3;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.4;
 
 			ROS_INFO_STREAM("\t goal_pose, x: " << goal_pose.pose.position.x << "y: " << goal_pose.pose.position.y << "z: " << goal_pose.pose.position.z);
 			double roll = 0;
-			double pitch = 0;
+			double pitch = M_PI_2;
 			double yaw = 0;
 			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
 			

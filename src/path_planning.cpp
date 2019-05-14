@@ -232,16 +232,29 @@ void PathPlanning::home()
 	geometry_msgs::PoseStamped home_pose;
 
 	home_pose.header.frame_id = move_group.getPlanningFrame();
-	home_pose.pose.position.x = 0.4132035105;
-	home_pose.pose.position.y = -0.0179568269643;
-	home_pose.pose.position.z = 0.208061153671;
-	home_pose.pose.orientation.x = 0.995545972505;
-	home_pose.pose.orientation.y = -0.0122897043145;
-	home_pose.pose.orientation.z = -0.0931866267225;
-	home_pose.pose.orientation.w = 0.00730974678028;
+	home_pose.pose.position.x = 0.374520550483;
+	home_pose.pose.position.y = 0.377399909297;
+	home_pose.pose.position.z = 0.48811762453;
+	home_pose.pose.orientation.x = 0.000370039741603;
+	home_pose.pose.orientation.y = 0.707193378361;
+	home_pose.pose.orientation.z = -0.000147597484232;
+	home_pose.pose.orientation.w = 0.707020061164;
 	move_group.setPoseTarget(home_pose);
 
-	ROS_INFO_STREAM("\t Target pose set to: " << move_group.getPoseTarget(move_group.getEndEffectorLink()));
+	visual_tools.deleteAllMarkers();
+	visual_tools.loadRemoteControl();
+
+	ROS_INFO_NAMED("tutorial", "Planning frame: %s", move_group.getPlanningFrame().c_str());
+	ROS_INFO_NAMED("tutorial", "End effector link: %s", move_group.getEndEffectorLink().c_str());
+
+	visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to start the demo");
+
+	visual_tools.publishAxisLabeled(goal_pose.pose, "goal_pose");
+	
+	visual_tools.trigger();
+	visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+
+	ROS_INFO_STREAM("\t Home pose set to: " << move_group.getPoseTarget(move_group.getEndEffectorLink()));
 
 	plan();
 	execute();
