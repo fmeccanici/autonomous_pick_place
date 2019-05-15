@@ -106,7 +106,7 @@ void ObjectDetection::subscriber_callback(const aruco_msgs::MarkerArray &mk_arra
 			// with margin
 			collision_objects[i].primitives[0].dimensions[0] = 0.15;
 			collision_objects[i].primitives[0].dimensions[1] = 0.1;
-			collision_objects[i].primitives[0].dimensions[2] = 0.16; 
+			collision_objects[i].primitives[0].dimensions[2] = 0.2; 
 
 			// Define the pose of the object. 
 			collision_objects[i].primitive_poses.resize(1);
@@ -157,6 +157,26 @@ void ObjectDetection::subscriber_callback(const aruco_msgs::MarkerArray &mk_arra
 			collision_objects[j].primitives[0].type = collision_objects[j].primitives[0].BOX;
 			collision_objects[j].primitives[0].dimensions.resize(3);			
 
+			// large box on top of two small boxes
+			// with margin 
+			collision_objects[j].primitives[0].dimensions[0] = 0.35;
+			collision_objects[j].primitives[0].dimensions[1] = 0.28; 
+			collision_objects[j].primitives[0].dimensions[2] = 0.65; 
+
+			// without margin
+			// collision_objects[j].primitives[0].dimensions[0] = 0.30;
+			// collision_objects[j].primitives[0].dimensions[1] = 0.23; 
+			// collision_objects[j].primitives[0].dimensions[2] = 0.40; 
+
+
+			// Define the pose of the object. 
+			collision_objects[j].primitive_poses.resize(1);
+			collision_objects[j].primitive_poses[0].position.x = mk_array.markers[i].pose.pose.position.x;
+			collision_objects[j].primitive_poses[0].position.y = mk_array.markers[i].pose.pose.position.y;
+			collision_objects[j].primitive_poses[0].position.z = mk_array.markers[i].pose.pose.position.z - collision_objects[j].primitives[0].dimensions[2]/2;
+
+			/*
+			// only large box
 			// with margin 
 			collision_objects[j].primitives[0].dimensions[0] = 0.30;
 			collision_objects[j].primitives[0].dimensions[1] = 0.28; 
@@ -173,7 +193,7 @@ void ObjectDetection::subscriber_callback(const aruco_msgs::MarkerArray &mk_arra
 			collision_objects[j].primitive_poses[0].position.x = mk_array.markers[i].pose.pose.position.x;
 			collision_objects[j].primitive_poses[0].position.y = mk_array.markers[i].pose.pose.position.y;
 			collision_objects[j].primitive_poses[0].position.z = mk_array.markers[i].pose.pose.position.z - collision_objects[j].primitives[0].dimensions[2]/2;// + 0.115; //0.025;
-		
+			*/
 
 		}
 	}

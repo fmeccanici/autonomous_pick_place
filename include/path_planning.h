@@ -2,7 +2,8 @@
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
-
+#include <std_msgs/Float64.h>
+#include <std_msgs/String.h>
 
 #include <moveit_visual_tools/moveit_visual_tools.h>
 #include <rviz_visual_tools/rviz_visual_tools.h>
@@ -33,6 +34,12 @@ class PathPlanning : public AutonomousPickPlace
 		moveit_msgs::PlanningScene planning_scene_msgs;
 		moveit_msgs::CollisionObject floor;
 		
+		// autonomous_pick_place::benchmark benchmark_msg;
+
+		ros::Publisher benchmark_time_publisher = nh.advertise<std_msgs::Float64>("motion_planning_benchmark/planning_time",1);
+		ros::Publisher benchmark_motion_planner_publisher = nh.advertise<std_msgs::String>("motion_planning_benchmark/motion_planner",1);
+
+
 		ros::Publisher planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
 		
 		PathPlanning();

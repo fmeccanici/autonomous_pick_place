@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
 	path_planning.set_parameters(planning_time, vel_scale_factor, reference_frame, planner_id);
 
-
+	grasping.detach_object();
 	grasping.open_gripper();
 
 	path_planning.home();

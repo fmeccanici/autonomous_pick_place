@@ -20,6 +20,10 @@ void PathPlanning::set_parameters(double planning_time, double vel_scale_factor,
   	move_group.setPoseReferenceFrame(reference_frame);	
   	move_group.setStartStateToCurrentState();
   	move_group.setMaxVelocityScalingFactor(vel_scale_factor);
+  	benchmark_motion_planner_publisher.publish(planner_id);
+  	ros::spinOnce();
+  	ROS_INFO_STREAM("\t SPINNED");
+
 }	
 
 
@@ -44,6 +48,12 @@ void PathPlanning::plan()
 	}
 
 	ROS_INFO_STREAM("Plan found in " << my_plan.planning_time_ << " seconds");
+
+	// benchmark_msg.planning_time = my_plan.planning_time_;
+
+	benchmark_time_publisher.publish(my_plan.planning_time_);
+	ros::spinOnce();
+
 }
 
 
@@ -229,6 +239,48 @@ void PathPlanning::disable_collisions()
 
 void PathPlanning::home()
 {
+	// joint space home position
+	const robot_state::JointModelGroup* joint_model_group =
+	    move_group.getCurrentState()->getJointModelGroup("arm_torso");
+
+	moveit::core::RobotStatePtr current_state = move_group.getCurrentState();	
+	std::vector<double> joint_group_positions;
+	current_state->copyJointGroupPositions(joint_model_group, joint_group_positions);
+
+	// get current joint position
+	/*
+	const std::vector< std::string > joint_group_names = move_group.getJointNames();
+
+	for (unsigned int i = 0; i < joint_group_positions.size(); i++)
+	{
+		ROS_INFO_STREAM("\t" << joint_group_positions[i]);
+		ROS_INFO_STREAM("\t" << joint_group_names[i]);
+
+		
+	}
+	*/
+
+	// [torso_lift_joint, arm_1_joint, arm_2_joint, arm_3_joint, arm_4_joint, arm_5_joint, arm_6_joint, arm_7_joint]
+	joint_group_positions = {0.115151, 2.36694, 0.37063, -0.0277066, 1.92753, 0.537318, -0.0297211, 0.270001};
+	//joint_group_positions = {2.366953473745571, 0.37061498105508595, -0.027813971682339046, 1.9275275258384308, 0.5373180664365675, -0.02972114173012655, 0.2700012783286766, 0.005061454824999999, -0.8300785912999998, 0.11505448934323464, 0.03042328042328042, 0.08597883597883597, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+
+	Eigen::Affine3d text_pose = Eigen::Affine3d::Identity();
+	text_pose.translation().z() = 1.75;
+	visual_tools.publishText(text_pose, "MoveGroupInterface Demo", rviz_visual_tools::WHITE, rviz_visual_tools::XLARGE);
+
+	move_group.setJointValueTarget(joint_group_positions);
+
+	bool success = (move_group.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+	ROS_INFO_NAMED("tutorial", "Visualizing plan 2 (joint space goal) %s", success ? "" : "FAILED");
+
+	visual_tools.deleteAllMarkers();
+	visual_tools.publishText(text_pose, "Joint Space Goal", rviz_visual_tools::WHITE, rviz_visual_tools::XLARGE);
+	visual_tools.publishTrajectoryLine(my_plan.trajectory_, joint_model_group);
+	visual_tools.trigger();
+	visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+
+	// cartesian home position
+	/*
 	geometry_msgs::PoseStamped home_pose;
 
 	home_pose.header.frame_id = move_group.getPlanningFrame();
@@ -255,8 +307,7 @@ void PathPlanning::home()
 	visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 
 	ROS_INFO_STREAM("\t Home pose set to: " << move_group.getPoseTarget(move_group.getEndEffectorLink()));
-
-	plan();
+*/
 	execute();
 }
 

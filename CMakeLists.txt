@@ -19,9 +19,29 @@ if(NOT EIGEN3_INCLUDE_DIRS)
 endif()
 
 
+
+
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs geometry_msgs message_filters message_generation dynamic_reconfigure rosbag dynamixel_workbench_msgs eigen_conversions moveit_ros_planning_interface moveit_visual_tools)
 
+
+
+
+add_message_files(
+  FILES
+  benchmark.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  geometry_msgs
+)
+
+
 catkin_package(CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_filters message_generation dynamic_reconfigure rosbag dynamixel_workbench_msgs)
+
+
+
 
 include_directories(${catkin_INCLUDE_DIRS} include)
 
@@ -68,3 +88,4 @@ scripts/custom_calibration.py
 scripts/publish_camera_info.py
 scripts/publish_new_tf.py
 DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
