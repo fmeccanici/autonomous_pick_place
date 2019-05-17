@@ -16,9 +16,15 @@
 #include "path_planning.h"
 #include "benchmarking.h"
 
+#include <iostream>
+#include <fstream>
+
+
+using namespace std;
+
 int main(int argc, char *argv[])
 {	
-	bool benchmark = 0;
+	// bool benchmark = 0;
 
 	// if (benchmark == 1)
 	// {
@@ -26,8 +32,19 @@ int main(int argc, char *argv[])
 	// 	benchmarking.start();
 	// }
 
+
+
 	ros::init(argc, argv, "autonomous_pick_place_node");
 	
+
+	// ros::NodeHandle nh;
+	// ros::Publisher benchmarking_time_publisher = nh.advertise<std_msgs::Float64>("motion_planning_benchmarking/planning_time",1);
+	// ros::Publisher benchmarking_trajectory_publisher = nh.advertise<moveit_msgs::RobotTrajectory>("motion_planning_benchmarking/trajectory",1);
+	ros::NodeHandle nh;
+	ros::Publisher benchmarking_plannerid_publisher = nh.advertise<std_msgs::String>("motion_planning_benchmarking/planner_id",1);
+
+	ofstream myfile;
+
 
 	// If benchmark parameter is set to true
 	// ROS_INFO_STREAM(typeid(*argv[1]).name());
@@ -74,7 +91,7 @@ int main(int argc, char *argv[])
 	// }
 
 
-	grasping.detach_object();
+	// grasping.detach_object();
 	grasping.open_gripper();
 
 	path_planning.home();
@@ -100,6 +117,24 @@ int main(int argc, char *argv[])
 
 
 	path_planning.plan();
+	// benchmarking_time_publisher.publish(path_planning.my_plan.trajectory_);
+	// benchmarking_trajectory_publisher.publish(path_planning.my_plan.planning_time_);
+
+	myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/trajectory.txt");
+	myfile << path_planning.my_plan.trajectory_ << "\n";
+	myfile.close();
+
+	myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/planning_time.txt");
+	myfile << path_planning.my_plan.planning_time_ << "\n";
+	myfile.close();
+
+
+	myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/planner_id.txt");
+	myfile << planner_id << "\n";
+	myfile.close();
+	benchmarking_plannerid_publisher.publish(planner_id);
+	ros::spinOnce();
+
 	path_planning.execute();
 	sleep(5);
 	grasping.close_gripper();

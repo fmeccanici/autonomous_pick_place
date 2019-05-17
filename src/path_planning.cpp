@@ -4,14 +4,34 @@ PathPlanning::PathPlanning()
 {
 	ROS_INFO_STREAM("Path planning initialized");
 
+	int argc = 0;
+	char** argv = {};
+
+	ros::init(argc, argv, "path_planning_node");
+
 	spinner.start();
 
 }
+
 
 PathPlanning::~PathPlanning()
 {
 	spinner.stop();
 }
+
+
+void PathPlanning::start_spinner()
+{
+	
+}
+
+
+void PathPlanning::stop_spinner()
+{
+	
+}
+
+
 
 void PathPlanning::set_parameters(double planning_time, double vel_scale_factor, std::string reference_frame, std::string planner_id)
 {
@@ -36,6 +56,8 @@ void PathPlanning::set_goal(geometry_msgs::PoseStamped goal_pose)
 
 void PathPlanning::plan()
 {
+	start_spinner();
+
 	ROS_INFO_STREAM("Planning to move " <<
 	              move_group.getEndEffectorLink() << " to a target pose expressed in " <<
 	              move_group.getPlanningFrame());
@@ -51,8 +73,11 @@ void PathPlanning::plan()
 
 	// benchmark_msg.planning_time = my_plan.planning_time_;
 
-	// benchmark_time_publisher.publish(my_plan.planning_time_);
-	// ros::spinOnce();
+	benchmarking_time_publisher.publish(my_plan.planning_time_);
+	benchmarking_trajectory_publisher.publish(my_plan.trajectory_);
+	sleep(2);
+	stop_spinner();
+	
 
 }
 
@@ -69,6 +94,8 @@ void PathPlanning::execute()
   	move_group.move();
 
   	ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
+
+
 }
 
 void PathPlanning::add_floor()

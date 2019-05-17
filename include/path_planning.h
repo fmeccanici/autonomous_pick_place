@@ -1,3 +1,6 @@
+#ifndef PATH_PLANNING_H
+#define PATH_PLANNING_H
+
 #include <ros/ros.h>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
@@ -13,15 +16,13 @@
 #include "autonomous_pick_place.h"
 
 
-#ifndef PATH_PLANNING_H
-#define PATH_PLANNING_H
-
 class PathPlanning : public AutonomousPickPlace
 {
 	public:
 		bool visualization;
 
 		geometry_msgs::PoseStamped goal_pose;
+		
 
 		robot_model_loader::RobotModelLoader robot_model_loader{"robot_description"};
 		robot_model::RobotModelPtr kinematic_model = robot_model_loader.getModel();
@@ -32,7 +33,8 @@ class PathPlanning : public AutonomousPickPlace
 		
 		// autonomous_pick_place::benchmark benchmark_msg;
 
-		// ros::Publisher benchmark_time_publisher = nh.advertise<std_msgs::Float64>("motion_planning_benchmark/planning_time",1);
+		ros::Publisher benchmarking_time_publisher = nh.advertise<std_msgs::Float64>("motion_planning_benchmarking/planning_time",1);
+		ros::Publisher benchmarking_trajectory_publisher = nh.advertise<moveit_msgs::RobotTrajectory>("motion_planning_benchmarking/trajectory",1);
 
 		ros::Publisher planning_scene_diff_publisher = nh.advertise<moveit_msgs::PlanningScene>("planning_scene", 1);
 		
@@ -51,6 +53,8 @@ class PathPlanning : public AutonomousPickPlace
 		void disable_collisions();
 		void home();
 		void add_floor();
+		void start_spinner();
+		void stop_spinner();
 };
 
 #endif

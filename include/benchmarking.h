@@ -34,10 +34,10 @@ class Benchmarking
 		moveit_visual_tools::MoveItVisualTools visual_tools{move_group.getPlanningFrame(),"/rviz_visual_markers"};
 		moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
-		// ros::Publisher benchmark_motion_planner_publisher = nh.advertise<std_msgs::String>("motion_pla
+		// ros::Publisher benchmark_motion_planner_publisher = nh.advertise<std_msgs::String>("motion_planning_benchmarking/states",1);
 
 
-		ros::Publisher benchmarking_message_publisher = nh.advertise<autonomous_pick_place::benchmarking>("motion_planning_benchmarking",1);
+		ros::Publisher benchmarking_state_publisher = nh.advertise<autonomous_pick_place::benchmarking>("motion_planning_benchmarking/states",1);
 		ros::Subscriber joint_state_subscriber = nh.subscribe("/joint_states", 1000, &Benchmarking::subscriber_callback, this);
 
 
