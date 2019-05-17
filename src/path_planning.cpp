@@ -20,9 +20,9 @@ void PathPlanning::set_parameters(double planning_time, double vel_scale_factor,
   	move_group.setPoseReferenceFrame(reference_frame);	
   	move_group.setStartStateToCurrentState();
   	move_group.setMaxVelocityScalingFactor(vel_scale_factor);
-  	benchmark_motion_planner_publisher.publish(planner_id);
-  	ros::spinOnce();
-  	ROS_INFO_STREAM("\t SPINNED");
+  	// benchmark_motion_planner_publisher.publish(planner_id);
+  	// ros::spinOnce();
+  	// ROS_INFO_STREAM("\t SPINNED");
 
 }	
 
@@ -51,16 +51,14 @@ void PathPlanning::plan()
 
 	// benchmark_msg.planning_time = my_plan.planning_time_;
 
-	benchmark_time_publisher.publish(my_plan.planning_time_);
-	ros::spinOnce();
+	// benchmark_time_publisher.publish(my_plan.planning_time_);
+	// ros::spinOnce();
 
 }
 
 
-
 void PathPlanning::execute()
 {
-
 
 	// Execute the plan
   	ros::Time start = ros::Time::now();

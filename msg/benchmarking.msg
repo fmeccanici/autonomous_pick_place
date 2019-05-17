@@ -1,5 +1,6 @@
 Header header
 string motion_planner
 geometry_msgs/PoseStamped end_effector_pose
-float64[] joint_positions
+sensor_msgs/JointState joint_states
+moveit_msgs/RobotTrajectory robot_trajectory
 float64 planning_time

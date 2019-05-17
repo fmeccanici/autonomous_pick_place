@@ -19,31 +19,31 @@ if(NOT EIGEN3_INCLUDE_DIRS)
 endif()
 
 
-
-
 find_package(catkin REQUIRED COMPONENTS roscpp std_msgs sensor_msgs geometry_msgs message_filters message_generation dynamic_reconfigure rosbag dynamixel_workbench_msgs eigen_conversions moveit_ros_planning_interface moveit_visual_tools)
-
-
 
 
 add_message_files(
   FILES
-  benchmark.msg
+  benchmarking.msg
 )
 
 generate_messages(
   DEPENDENCIES
   std_msgs
   geometry_msgs
+  sensor_msgs
+  moveit_msgs
 )
 
 
 catkin_package(CATKIN_DEPENDS roscpp std_msgs sensor_msgs geometry_msgs message_filters message_generation dynamic_reconfigure rosbag dynamixel_workbench_msgs)
 
 
-
-
 include_directories(${catkin_INCLUDE_DIRS} include)
+
+
+add_library(autonomous_pick_place STATIC src/autonomous_pick_place.cpp)
+add_library(benchmarking STATIC src/benchmarking.cpp)
 
 add_library(grasping STATIC src/grasping.cpp)
 add_library(path_planning STATIC src/path_planning.cpp)
@@ -52,25 +52,39 @@ add_library(object_detection STATIC src/object_detection.cpp)
 add_executable(gripper_communication_error_solver src/gripper_communication_error_solver.cpp)
 add_executable(gripper_state_adder src/gripper_state_adder.cpp)
 
-add_executable(autonomous_pick_place src/autonomous_pick_place.cpp)
-add_executable(generate_data src/generate_data.cpp)
 
+add_executable(autonomous_pick_place_node 
+              src/autonomous_pick_place_node.cpp 
+              src/autonomous_pick_place.cpp)
+
+add_executable(benchmarking_node
+               src/benchmarking_node.cpp
+               src/benchmarking.cpp)
+
+
+add_executable(generate_data src/generate_data.cpp)
 add_executable(test_node src/test_node.cpp)
 
+
 target_link_libraries(test_node ${catkin_LIBRARIES})
-
 target_link_libraries(gripper_communication_error_solver ${catkin_LIBRARIES})
-
 target_link_libraries(gripper_state_adder ${catkin_LIBRARIES})
-
 target_link_libraries(generate_data ${catkin_LIBRARIES})
-
-
 target_link_libraries(autonomous_pick_place ${catkin_LIBRARIES})
 target_link_libraries(grasping ${catkin_LIBRARIES})
+
+
 target_link_libraries(autonomous_pick_place path_planning)
 target_link_libraries(autonomous_pick_place grasping)
 target_link_libraries(autonomous_pick_place object_detection)
+target_link_libraries(autonomous_pick_place benchmarking)
+
+
+
+target_link_libraries(autonomous_pick_place_node autonomous_pick_place)
+target_link_libraries(benchmarking_node autonomous_pick_place)
+
+
 
 
 install(TARGETS ${PROJECT_NAME} autonomous_pick_place grasping
