@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 	ros::NodeHandle nh;
 	ros::Publisher benchmarking_plannerid_publisher = nh.advertise<std_msgs::String>("motion_planning_benchmarking/planner_id",1);
 
-	ofstream myfile;
+	// ofstream myfile;
 
 
 	// If benchmark parameter is set to true
@@ -120,18 +120,19 @@ int main(int argc, char *argv[])
 	// benchmarking_time_publisher.publish(path_planning.my_plan.trajectory_);
 	// benchmarking_trajectory_publisher.publish(path_planning.my_plan.planning_time_);
 
-	myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/trajectory.txt");
-	myfile << path_planning.my_plan.trajectory_ << "\n";
-	myfile.close();
+	// myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/trajectory.txt");
+	// myfile << path_planning.my_plan.trajectory_ << "\n";
+	// myfile.close();
 
-	myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/planning_time.txt");
-	myfile << path_planning.my_plan.planning_time_ << "\n";
-	myfile.close();
+	// myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/planning_time.txt");
+	// myfile << path_planning.my_plan.planning_time_ << "\n";
+	// myfile.close();
 
 
-	myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/planner_id.txt");
-	myfile << planner_id << "\n";
-	myfile.close();
+	// myfile.open("/home/fmeccanici/moveit_ws/src/robot_models/marco/autonomous_pick_place/files/planner_id.txt");
+	// myfile << planner_id << "\n";
+	// myfile.close();
+	
 	benchmarking_plannerid_publisher.publish(planner_id);
 	ros::spinOnce();
 
