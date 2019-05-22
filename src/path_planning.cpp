@@ -113,8 +113,8 @@ void PathPlanning::execute()
 
   	benchmarking_execution_time_publisher.publish(execution_time);
 
-  	myfile.open("/home/fmeccanici/Documents/autonomous_manipulation/rosbags/motion_planners_evaluation/execution_time.txt", std::ios_base::app);
-  	myfile << execution_time << "\n";
+  	myfile.open("/home/fmeccanici/Documents/autonomous_manipulation/rosbags/motion_planners_evaluation/execution_time.txt");
+  	myfile << execution_time;
   	myfile.close();
 
   	ROS_INFO_STREAM("Motion duration: " << execution_time);
