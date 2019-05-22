@@ -40,7 +40,7 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 			
 			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
 			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
-			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.16;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.13;
 
 			/*
 			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - 0.2;

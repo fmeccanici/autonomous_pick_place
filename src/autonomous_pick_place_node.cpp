@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
 	// ros::Publisher benchmarking_time_publisher = nh.advertise<std_msgs::Float64>("motion_planning_benchmarking/planning_time",1);
 	// ros::Publisher benchmarking_trajectory_publisher = nh.advertise<moveit_msgs::RobotTrajectory>("motion_planning_benchmarking/trajectory",1);
 	ros::NodeHandle nh;
-	ros::Publisher benchmarking_plannerid_publisher = nh.advertise<std_msgs::String>("motion_planning_benchmarking/planner_id",1);
 
 	// ofstream myfile;
 
@@ -67,11 +66,10 @@ int main(int argc, char *argv[])
 	planning_time = 5.0;
 	vel_scale_factor = 1.0;
 	reference_frame = "base_footprint";
-	planner_id = "SBLkConfigDefault";	
+	planner_id = "RRTConnect";	
 
 
 
-	
 
 	// publish planner id to benchmark topic
 	// pick_and_place.benchmark_motion_planner_publisher.publish(planner_id);
@@ -90,10 +88,12 @@ int main(int argc, char *argv[])
 	// 	benchmark.start();
 	// }
 
+	// double offset1 = 0.25;
 
-	// grasping.detach_object();
+	grasping.detach_object();
 	grasping.open_gripper();
 
+	
 	path_planning.home();
 
 	grasping.detach_object();
@@ -117,6 +117,18 @@ int main(int argc, char *argv[])
 
 
 	path_planning.plan();
+	path_planning.execute();
+
+	// // double offset2 = 0.14;
+	// grasping.determine_goal_pose(1, collision_objects);
+	// grasping.visualize();
+
+	// path_planning.set_goal(grasping.goal_pose);
+
+
+	// path_planning.plan();
+	// path_planning.execute();
+	grasping.close_gripper();
 	// benchmarking_time_publisher.publish(path_planning.my_plan.trajectory_);
 	// benchmarking_trajectory_publisher.publish(path_planning.my_plan.planning_time_);
 
@@ -133,9 +145,9 @@ int main(int argc, char *argv[])
 	// myfile << planner_id << "\n";
 	// myfile.close();
 	
-	benchmarking_plannerid_publisher.publish(planner_id);
 	ros::spinOnce();
 
+	/*
 	path_planning.execute();
 	sleep(5);
 	grasping.close_gripper();
@@ -173,7 +185,7 @@ int main(int argc, char *argv[])
 	sleep(5);
 	grasping.open_gripper();
 	
-
+	*/
 	
 	
 	return EXIT_SUCCESS;

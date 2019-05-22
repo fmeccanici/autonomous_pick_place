@@ -105,7 +105,7 @@ void ObjectDetection::subscriber_callback(const aruco_msgs::MarkerArray &mk_arra
 
 			// with margin
 			collision_objects[i].primitives[0].dimensions[0] = 0.15;
-			collision_objects[i].primitives[0].dimensions[1] = 0.1;
+			collision_objects[i].primitives[0].dimensions[1] = 0.09;
 			collision_objects[i].primitives[0].dimensions[2] = 0.2; 
 
 			// Define the pose of the object. 

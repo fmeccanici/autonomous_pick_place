@@ -40,6 +40,11 @@ void PathPlanning::set_parameters(double planning_time, double vel_scale_factor,
   	move_group.setPoseReferenceFrame(reference_frame);	
   	move_group.setStartStateToCurrentState();
   	move_group.setMaxVelocityScalingFactor(vel_scale_factor);
+	benchmarking_plannerid_publisher.publish(move_group.getPlannerId());
+  	myfile.open("/home/fmeccanici/Documents/autonomous_manipulation/rosbags/motion_planners_evaluation/planner_id.txt");
+  	myfile << move_group.getPlannerId();
+  	myfile.close();
+
   	// benchmark_motion_planner_publisher.publish(planner_id);
   	// ros::spinOnce();
   	// ROS_INFO_STREAM("\t SPINNED");
@@ -51,12 +56,11 @@ void PathPlanning::set_goal(geometry_msgs::PoseStamped goal_pose)
 {
 	move_group.setPoseTarget(goal_pose);
 	ROS_INFO_STREAM("\t Target pose set to: " << move_group.getPoseTarget(move_group.getEndEffectorLink()));
-
 }
 
 void PathPlanning::plan()
 {
-	start_spinner();
+	// start_spinner();
 
 	ROS_INFO_STREAM("Planning to move " <<
 	              move_group.getEndEffectorLink() << " to a target pose expressed in " <<
@@ -74,9 +78,21 @@ void PathPlanning::plan()
 	// benchmark_msg.planning_time = my_plan.planning_time_;
 
 	benchmarking_time_publisher.publish(my_plan.planning_time_);
-	benchmarking_trajectory_publisher.publish(my_plan.trajectory_);
-	sleep(2);
-	stop_spinner();
+	ROS_INFO_STREAM(my_plan.trajectory_.joint_trajectory.points.size());
+
+	for (unsigned i = 0; i < my_plan.trajectory_.joint_trajectory.points.size(); i++)
+	{
+		// ROS_INFO_STREAM(my_plan.trajectory_.joint_trajectory.points.size());
+
+		// ROS_INFO_STREAM(my_plan.trajectory_.joint_trajectory.points[i]);
+		benchmarking_trajectory_publisher.publish(my_plan.trajectory_.joint_trajectory.points[i]);
+	}
+	
+	benchmarking_joint_names_publisher.publish(my_plan.trajectory_.joint_trajectory.joint_names);
+
+	// ros::spinOnce();
+	// sleep(10);
+	// stop_spinner();
 	
 
 }
@@ -93,9 +109,17 @@ void PathPlanning::execute()
 	                    "robot");
   	move_group.move();
 
-  	ROS_INFO_STREAM("Motion duration: " << (ros::Time::now() - start).toSec());
+  	double execution_time = (ros::Time::now() - start).toSec();
 
+  	benchmarking_execution_time_publisher.publish(execution_time);
 
+  	myfile.open("/home/fmeccanici/Documents/autonomous_manipulation/rosbags/motion_planners_evaluation/execution_time.txt", std::ios_base::app);
+  	myfile << execution_time << "\n";
+  	myfile.close();
+
+  	ROS_INFO_STREAM("Motion duration: " << execution_time);
+
+  	ros::spinOnce();
 }
 
 void PathPlanning::add_floor()
