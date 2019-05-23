@@ -35,7 +35,7 @@ class Grasping : public AutonomousPickPlace
 
 	Grasping();
 	~Grasping();
-	void determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects); 
+	void determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects, double offset); 
         void visualize();
         void open_gripper();
         void close_gripper();

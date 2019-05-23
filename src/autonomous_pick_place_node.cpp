@@ -98,6 +98,8 @@ int main(int argc, char *argv[])
 
 	grasping.detach_object();
 
+	double offset1 = 0.20;
+
 	object_detection.detect_objects();
 	path_planning.add_objects(object_detection.collision_objects);
 
@@ -109,8 +111,8 @@ int main(int argc, char *argv[])
 
 	collision_objects[0] = collision_objects_map["object_pickup"];
 		
-	
-	grasping.determine_goal_pose(1, collision_objects);
+
+	grasping.determine_goal_pose(1, collision_objects, offset1);
 	grasping.visualize();
 
 	path_planning.set_goal(grasping.goal_pose);
@@ -119,16 +121,21 @@ int main(int argc, char *argv[])
 	path_planning.plan();
 	path_planning.execute();
 
-	// // double offset2 = 0.14;
-	// grasping.determine_goal_pose(1, collision_objects);
-	// grasping.visualize();
 
-	// path_planning.set_goal(grasping.goal_pose);
+	double offset2 = 0.13;
+	grasping.determine_goal_pose(1, collision_objects, offset2);
+	grasping.visualize();
+
+	path_planning.set_goal(grasping.goal_pose);
 
 
-	// path_planning.plan();
-	// path_planning.execute();
+	path_planning.plan();
+	path_planning.execute();
+
 	grasping.close_gripper();
+
+
+
 	// benchmarking_time_publisher.publish(path_planning.my_plan.trajectory_);
 	// benchmarking_trajectory_publisher.publish(path_planning.my_plan.planning_time_);
 
