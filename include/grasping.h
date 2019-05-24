@@ -28,14 +28,14 @@ class Grasping : public AutonomousPickPlace
         std_msgs::Int32 wb_m;
 
         dynamixel_workbench_msgs::DynamixelCommand en_grip_torque, grip_pos_goal, grip_current_goal;
-        std::vector<moveit_msgs::Grasp> grasps;
-        
+        std::vector<moveit_msgs::Grasp> grasps;        
 
         Eigen::Isometry3d text_pose = Eigen::Isometry3d::Identity();
 
 	Grasping();
 	~Grasping();
-	void determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects, double offset); 
+	void determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects); 
+        void determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects, double offset); 
         void visualize();
         void open_gripper();
         void close_gripper();

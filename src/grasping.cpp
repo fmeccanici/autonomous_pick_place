@@ -7,6 +7,45 @@ Grasping::Grasping()
 Grasping::~Grasping()
 {}
 
+void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects)
+{
+	goal_pose.header.frame_id = move_group.getPlanningFrame();
+	
+	for (unsigned int i = 0; i < collision_objects.size(); i++)
+	{
+
+		if (collision_objects[i].id == "object_pickup" && pick_or_place == 1)
+		{
+			object_pickup = collision_objects[i];
+
+			// Grasp object from above
+			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
+			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.13;
+
+			double roll = 0;
+			double pitch = M_PI_2;
+			double yaw = 0;
+
+			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
+		}
+		else if (collision_objects[i].id == "object_avoid" && pick_or_place == 0)
+		{
+
+			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
+			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
+			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + 0.4;
+
+			ROS_INFO_STREAM("\t goal_pose, x: " << goal_pose.pose.position.x << "y: " << goal_pose.pose.position.y << "z: " << goal_pose.pose.position.z);
+			double roll = 0;
+			double pitch = M_PI_2;
+			double yaw = 0;
+			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
+		}
+	}
+}
+
+
 void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::CollisionObject> collision_objects, double offset)
 {
 	
@@ -22,44 +61,18 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 		{
 			object_pickup = collision_objects[i];
 
-			/*
-			// Random feasible pose
-			goal_pose.pose.position.x = 0.43;
-			goal_pose.pose.position.y = -0.08;
-			goal_pose.pose.position.z = 0.33; //0.717439;
-			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(0, M_PI_2, 0);
-			*/
-
-			// goal_pose.pose.orientation.x = -0.000238538;
-			// goal_pose.pose.orientation.y = -0.01;
-			// goal_pose.pose.orientation.z = 0.003;//-5.83127e-05;
-			
-
-			// Assume for now a simple grasping strategy always pick up from above: rotation of pi/2 around y axis
-			
-			
+			// Grasp object from above
 			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x;
 			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
 			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/2 + offset;
 
-			/*
-			goal_pose.pose.position.x = collision_objects[i].primitive_poses[0].position.x - 0.2;
-			goal_pose.pose.position.y = collision_objects[i].primitive_poses[0].position.y;
-			goal_pose.pose.position.z = collision_objects[i].primitive_poses[0].position.z + collision_objects[i].primitives[0].dimensions[2]/4;
-			*/
-			ROS_INFO_STREAM("\t" << goal_pose.pose.position.z);
-
 			double roll = 0;
 			double pitch = M_PI_2;
-			// double pitch = 0;
-
 			double yaw = 0;
 
 			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
-			
-			
-
 		}
+
 		else if (collision_objects[i].id == "object_avoid" && pick_or_place == 0)
 		{
 
@@ -71,9 +84,7 @@ void Grasping::determine_goal_pose(bool pick_or_place, std::vector<moveit_msgs::
 			double roll = 0;
 			double pitch = M_PI_2;
 			double yaw = 0;
-			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);
-			
-
+			goal_pose.pose.orientation = tf::createQuaternionMsgFromRollPitchYaw(roll, pitch, yaw);	
 		}
 	}
 }
@@ -227,7 +238,9 @@ void Grasping::close_gripper()
     ros::spinOnce();
 }   
 
-
+// Code that I used to get the pick and place tutorial from MoveIt! working with Marco 
+// Did not use this code in the end since you could not see the trajectory that it was going to execute
+// This was dangerous since you could not check if it actually was feasible
 void Grasping::open_gripper_sim(trajectory_msgs::JointTrajectory& posture)
 {
 	 // BEGIN_SUB_TUTORIAL open_gripper
@@ -276,8 +289,6 @@ void Grasping::pick()
 	double roll = 0;
 	double pitch = M_PI_2;
 	double yaw = 0;
-
-
 
 	tf2::Quaternion orientation;
 	orientation.setRPY(roll, pitch, yaw);
@@ -385,3 +396,4 @@ void Grasping::place()
 	move_group.place("object_pickup", place_location);
 	// END_SUB_TUTORIAL	
 }
+
